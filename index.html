@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BA/SA Business Requirement Form</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1e2d45;
+    --accent: #3b82f6;
+    --accent2: #6366f1;
+    --accent3: #10b981;
+    --text: #f1f5f9;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --gold: #f59e0b;
+    --red: #ef4444;
+    --radius: 12px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 20% -20%, rgba(59,130,246,0.12) 0%, transparent 50%),
+      radial-gradient(ellipse 60% 40% at 80% 110%, rgba(99,102,241,0.10) 0%, transparent 50%);
+  }
+  .page-wrapper { max-width: 960px; margin: 0 auto; padding: 40px 20px 80px; }
+
+  /* HEADER */
+  .form-header {
+    text-align: center;
+    margin-bottom: 48px;
+    position: relative;
+  }
+  .header-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(59,130,246,0.12);
+    border: 1px solid rgba(59,130,246,0.3);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
+    color: #60a5fa; text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .header-badge::before { content: '◈'; font-size: 10px; }
+  h1 {
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 800;
+    line-height: 1.15;
+    background: linear-gradient(135deg, #f1f5f9 0%, #94a3b8 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+  .header-sub {
+    color: var(--text2); font-size: 15px; max-width: 520px; margin: 0 auto;
+    line-height: 1.6;
+  }
+  .header-divider {
+    width: 80px; height: 2px; margin: 24px auto 0;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  /* PHASE SECTIONS */
+  .phase-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .phase-card:hover { border-color: rgba(59,130,246,0.3); }
+  .phase-header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 20px 28px;
+    cursor: pointer;
+    user-select: none;
+    background: var(--surface2);
+    border-bottom: 1px solid transparent;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .phase-header:hover { background: #1f2e45; }
+  .phase-header.open { border-bottom-color: var(--border); }
+  .phase-num {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+    flex-shrink: 0;
+  }
+  .p1 .phase-num { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+  .p2 .phase-num { background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.3); }
+  .p3 .phase-num { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+  .p4 .phase-num { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+  .p5 .phase-num { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+  .phase-title { font-weight: 700; font-size: 16px; flex: 1; }
+  .phase-subtitle { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .phase-arrow {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: rgba(255,255,255,0.04);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text3); font-size: 12px;
+    transition: transform 0.25s, background 0.2s;
+    flex-shrink: 0;
+  }
+  .phase-header.open .phase-arrow { transform: rotate(180deg); background: rgba(59,130,246,0.12); color: #60a5fa; }
+  .phase-body {
+    padding: 28px;
+    display: none;
+  }
+  .phase-body.open { display: block; animation: fadeSlide 0.2s ease; }
+  @keyframes fadeSlide { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* FORM FIELDS */
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .field-grid.cols3 { grid-template-columns: 1fr 1fr 1fr; }
+  .field-grid.cols1 { grid-template-columns: 1fr; }
+  @media (max-width: 600px) { .field-grid, .field-grid.cols3 { grid-template-columns: 1fr; } }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label {
+    font-size: 12px; font-weight: 600; color: var(--text2);
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .field label span { color: var(--red); margin-left: 3px; }
+  input[type="text"], input[type="email"], input[type="number"], select, textarea {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 14px;
+    color: var(--text);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    width: 100%;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+    background: rgba(59,130,246,0.06);
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+  }
+  select option { background: #1a2235; }
+  textarea { resize: vertical; min-height: 90px; line-height: 1.5; }
+  .field-hint { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+  /* CHECKBOX GROUPS */
+  .check-group { display: flex; flex-wrap: wrap; gap: 8px; }
+  .check-item {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 14px;
+    cursor: pointer; transition: all 0.15s;
+    font-size: 13px;
+  }
+  .check-item:hover { background: rgba(59,130,246,0.08); border-color: rgba(59,130,246,0.3); }
+  .check-item input { display: none; }
+  .check-box {
+    width: 16px; height: 16px; border-radius: 4px;
+    border: 1.5px solid var(--text3);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; flex-shrink: 0;
+  }
+  .check-item input:checked ~ .check-box {
+    background: var(--accent); border-color: var(--accent);
+  }
+  .check-item input:checked ~ .check-box::after { content: '✓'; font-size: 10px; color: white; font-weight: 700; }
+  .check-item input:checked ~ span { color: var(--text); }
+  .check-item span { color: var(--text2); }
+
+  /* RADIO GROUPS */
+  .radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
+  .radio-item {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 14px;
+    cursor: pointer; transition: all 0.15s; font-size: 13px;
+  }
+  .radio-item:hover { background: rgba(59,130,246,0.08); border-color: rgba(59,130,246,0.3); }
+  .radio-item input { display: none; }
+  .radio-dot {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 1.5px solid var(--text3);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; flex-shrink: 0;
+  }
+  .radio-item input:checked ~ .radio-dot {
+    border-color: var(--accent);
+  }
+  .radio-item input:checked ~ .radio-dot::after {
+    content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: block;
+  }
+  .radio-item input:checked ~ span { color: var(--text); }
+  .radio-item span { color: var(--text2); }
+
+  /* SECTION LABELS */
+  .section-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--text3);
+    margin-bottom: 10px; margin-top: 20px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .section-label:first-child { margin-top: 0; }
+
+  /* SIGNATURE PAD */
+  .sig-container {
+    background: rgba(255,255,255,0.02);
+    border: 1.5px dashed var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+  .sig-container:hover { border-color: rgba(59,130,246,0.4); }
+  .sig-container canvas {
+    display: block; width: 100%; cursor: crosshair;
+    touch-action: none;
+  }
+  .sig-actions {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.02);
+    border-top: 1px solid var(--border);
+  }
+  .sig-hint { font-size: 11px; color: var(--text3); }
+  .sig-clear {
+    background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2);
+    color: #f87171; border-radius: 7px; padding: 5px 12px;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    transition: all 0.15s; font-family: inherit;
+  }
+  .sig-clear:hover { background: rgba(239,68,68,0.2); }
+
+  /* SUBMIT */
+  .form-footer {
+    margin-top: 32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+  }
+  .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  @media (max-width: 600px) { .footer-grid { grid-template-columns: 1fr; } }
+  .submit-btn {
+    width: 100%; padding: 16px 24px;
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    border: none; border-radius: 12px;
+    color: white; font-size: 15px; font-weight: 700;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    cursor: pointer; letter-spacing: 0.02em;
+    position: relative; overflow: hidden;
+    transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(59,130,246,0.3);
+  }
+  .submit-btn:hover { opacity: 0.93; transform: translateY(-1px); box-shadow: 0 8px 28px rgba(59,130,246,0.4); }
+  .submit-btn:active { transform: translateY(0); }
+  .quick-fill-btn {
+    width: 100%; padding: 11px 14px;
+    background: rgba(59,130,246,0.14);
+    border: 1px solid rgba(59,130,246,0.35);
+    border-radius: 10px;
+    color: #93c5fd; font-size: 13px; font-weight: 700;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    cursor: pointer; letter-spacing: 0.02em;
+    transition: background 0.2s, transform 0.15s, border-color 0.2s;
+  }
+  .quick-fill-btn:hover {
+    background: rgba(59,130,246,0.22);
+    border-color: rgba(59,130,246,0.5);
+    transform: translateY(-1px);
+  }
+
+  /* PROGRESS */
+  .progress-bar {
+    position: sticky; top: 0; z-index: 100;
+    height: 3px; background: var(--border);
+    margin-bottom: 32px;
+    border-radius: 3px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; background: linear-gradient(90deg, #3b82f6, #6366f1);
+    border-radius: 3px; transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  /* SUCCESS */
+  .success-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 999;
+    background: rgba(10,14,26,0.97);
+    align-items: center; justify-content: center;
+    flex-direction: column; text-align: center; padding: 40px;
+  }
+  .success-overlay.show { display: flex; animation: fadeIn 0.3s; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .success-icon {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: rgba(16,185,129,0.15);
+    border: 2px solid rgba(16,185,129,0.4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; margin-bottom: 24px;
+    animation: pop 0.4s ease 0.1s both;
+  }
+  @keyframes pop { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .success-title { font-size: 28px; font-weight: 800; margin-bottom: 10px; }
+  .success-sub { color: var(--text2); font-size: 15px; max-width: 400px; line-height: 1.6; margin-bottom: 28px; }
+  .download-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    color: white; border: none; border-radius: 10px;
+    padding: 13px 24px; font-size: 14px; font-weight: 700;
+    font-family: inherit; cursor: pointer;
+    text-decoration: none; letter-spacing: 0.02em;
+    box-shadow: 0 4px 16px rgba(59,130,246,0.3);
+  }
+  .new-form-btn {
+    display: inline-block; margin-top: 12px;
+    color: var(--text3); font-size: 13px; cursor: pointer;
+    text-decoration: underline; background: none; border: none;
+    font-family: inherit;
+  }
+  .new-form-btn:hover { color: var(--text2); }
+</style>
+</head>
+<body>
+
+<div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
+<div class="page-wrapper">
+  <div class="form-header">
+    <div class="header-badge">BA / SA Document</div>
+    <h1>Business Requirement<br>Request Form</h1>
+    <p class="header-sub">Complete all phases to generate a comprehensive requirement specification for your software project.</p>
+    <div class="header-divider"></div>
+  </div>
+
+  <form id="mainForm" onsubmit="submitForm(event)">
+
+    <!-- PHASE 1 -->
+    <div class="phase-card p1">
+      <div class="phase-header open" onclick="togglePhase(this)">
+        <div class="phase-num">P1</div>
+        <div><div class="phase-title">Business Understanding</div><div class="phase-subtitle">Project goals, users & business model</div></div>
+        <div class="phase-arrow">▾</div>
+      </div>
+      <div class="phase-body open">
+        <div class="section-label">Project Information</div>
+        <div class="field-grid">
+          <div class="field">
+            <label>Project Name <span>*</span></label>
+            <input type="text" name="project_name" placeholder="e.g. Crypto Simulator Mini App" required>
+          </div>
+          <div class="field">
+            <label>Client / Company <span>*</span></label>
+            <input type="text" name="client_name" placeholder="Company or client name" required>
+          </div>
+        </div>
+        <div class="field cols1" style="margin-top:16px">
+          <div class="field">
+            <label>Project Goal / Description <span>*</span></label>
+            <textarea name="project_goal" placeholder="Describe the purpose of the project..." required></textarea>
+          </div>
+        </div>
+
+        <div class="section-label">Project Type</div>
+        <div class="field">
+          <label>Primary Purpose <span>*</span></label>
+          <div class="check-group" id="purposeGroup">
+            <label class="check-item"><input type="checkbox" name="purpose" value="Crypto Education"><div class="check-box"></div><span>Crypto Education</span></label>
+            <label class="check-item"><input type="checkbox" name="purpose" value="Marketing Campaign"><div class="check-box"></div><span>Marketing Campaign</span></label>
+            <label class="check-item"><input type="checkbox" name="purpose" value="Trading Competition"><div class="check-box"></div><span>Trading Competition</span></label>
+            <label class="check-item"><input type="checkbox" name="purpose" value="Community Engagement"><div class="check-box"></div><span>Community Engagement</span></label>
+            <label class="check-item"><input type="checkbox" name="purpose" value="Lead Generation"><div class="check-box"></div><span>Lead Generation</span></label>
+            <label class="check-item"><input type="checkbox" name="purpose" value="Real Trading Platform"><div class="check-box"></div><span>Real Trading Platform</span></label>
+          </div>
+        </div>
+
+        <div class="section-label" style="margin-top:20px">Target Users</div>
+        <div class="field-grid">
+          <div class="field">
+            <label>Target User Type <span>*</span></label>
+            <select name="user_type" required>
+              <option value="">— Select —</option>
+              <option>Beginner Trader</option>
+              <option>Experienced Trader</option>
+              <option>Telegram Community</option>
+              <option>Global Users</option>
+              <option>Crypto Enthusiasts</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Expected User Scale <span>*</span></label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="user_scale" value="1,000" required><div class="radio-dot"></div><span>1,000</span></label>
+              <label class="radio-item"><input type="radio" name="user_scale" value="10,000"><div class="radio-dot"></div><span>10,000</span></label>
+              <label class="radio-item"><input type="radio" name="user_scale" value="100,000+"><div class="radio-dot"></div><span>100,000+</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-label" style="margin-top:20px">Business Model</div>
+        <div class="field">
+          <label>Revenue Model</label>
+          <div class="check-group">
+            <label class="check-item"><input type="checkbox" name="revenue" value="Ads"><div class="check-box"></div><span>Advertisements</span></label>
+            <label class="check-item"><input type="checkbox" name="revenue" value="Subscription"><div class="check-box"></div><span>Subscription</span></label>
+            <label class="check-item"><input type="checkbox" name="revenue" value="Referral"><div class="check-box"></div><span>Referral</span></label>
+            <label class="check-item"><input type="checkbox" name="revenue" value="Competition Fee"><div class="check-box"></div><span>Competition Fee</span></label>
+            <label class="check-item"><input type="checkbox" name="revenue" value="Promote Exchange"><div class="check-box"></div><span>Promote Exchange</span></label>
+            <label class="check-item"><input type="checkbox" name="revenue" value="None"><div class="check-box"></div><span>No Revenue</span></label>
+          </div>
+        </div>
+
+        <div class="section-label" style="margin-top:20px">Compliance & Market Scope</div>
+        <div class="field-grid">
+          <div class="field">
+            <label>Primary Jurisdiction <span>*</span></label>
+            <select name="jurisdiction" required>
+              <option value="">— Select —</option>
+              <option>Global (multi-region)</option>
+              <option>United States</option>
+              <option>European Union</option>
+              <option>Southeast Asia</option>
+              <option>Middle East</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Product Legal Mode <span>*</span></label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="legal_mode" value="Simulation Only" required><div class="radio-dot"></div><span>Simulation Only</span></label>
+              <label class="radio-item"><input type="radio" name="legal_mode" value="Hybrid (Sim + Real)"><div class="radio-dot"></div><span>Hybrid</span></label>
+              <label class="radio-item"><input type="radio" name="legal_mode" value="Real Trading"><div class="radio-dot"></div><span>Real Trading</span></label>
+            </div>
+          </div>
+        </div>
+        <div class="field-grid" style="margin-top:16px">
+          <div class="field">
+            <label>KYC / AML Requirement <span>*</span></label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="kyc_aml" value="Required" required><div class="radio-dot"></div><span>Required</span></label>
+              <label class="radio-item"><input type="radio" name="kyc_aml" value="Optional"><div class="radio-dot"></div><span>Optional</span></label>
+              <label class="radio-item"><input type="radio" name="kyc_aml" value="Not Required"><div class="radio-dot"></div><span>Not Required</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Age Gate Policy <span>*</span></label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="age_gate" value="18+" required><div class="radio-dot"></div><span>18+</span></label>
+              <label class="radio-item"><input type="radio" name="age_gate" value="21+"><div class="radio-dot"></div><span>21+</span></label>
+              <label class="radio-item"><input type="radio" name="age_gate" value="No Restriction"><div class="radio-dot"></div><span>No Restriction</span></label>
+            </div>
+          </div>
+        </div>
+        <div class="field" style="margin-top:16px">
+          <label>Restricted Countries / Regions</label>
+          <input type="text" name="restricted_regions" placeholder="e.g. OFAC-sanctioned regions, country list...">
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 2 -->
+    <div class="phase-card p2">
+      <div class="phase-header" onclick="togglePhase(this)">
+        <div class="phase-num">P2</div>
+        <div><div class="phase-title">Functional Requirements</div><div class="phase-subtitle">Trading system, auth, coins & leaderboard</div></div>
+        <div class="phase-arrow">▾</div>
+      </div>
+      <div class="phase-body">
+        <div class="section-label">Trading Simulation Rules</div>
+        <div class="field-grid cols3">
+          <div class="field">
+            <label>Initial Balance (USD) <span>*</span></label>
+            <input type="number" name="initial_balance" placeholder="10000" value="10000" required>
+          </div>
+          <div class="field">
+            <label>Trading Fee (%)</label>
+            <input type="number" name="trading_fee" placeholder="0.1" step="0.01" value="0.1">
+          </div>
+          <div class="field">
+            <label>Leverage Allowed?</label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="leverage" value="Yes"><div class="radio-dot"></div><span>Yes</span></label>
+              <label class="radio-item"><input type="radio" name="leverage" value="No"><div class="radio-dot"></div><span>No</span></label>
+            </div>
+          </div>
+        </div>
+        <div class="field-grid" style="margin-top:16px">
+          <div class="field">
+            <label>Short Selling?</label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="shortsell" value="Yes"><div class="radio-dot"></div><span>Yes</span></label>
+              <label class="radio-item"><input type="radio" name="shortsell" value="No"><div class="radio-dot"></div><span>No</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Authentication Method <span>*</span></label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="auth" value="Telegram Only" required><div class="radio-dot"></div><span>Telegram Only</span></label>
+              <label class="radio-item"><input type="radio" name="auth" value="Email + Telegram"><div class="radio-dot"></div><span>Email + Telegram</span></label>
+              <label class="radio-item"><input type="radio" name="auth" value="Email Only"><div class="radio-dot"></div><span>Email Only</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-label" style="margin-top:20px">Available Coins</div>
+        <div class="field">
+          <div class="check-group">
+            <label class="check-item"><input type="checkbox" name="coins" value="BTC" checked><div class="check-box"></div><span>BTC</span></label>
+            <label class="check-item"><input type="checkbox" name="coins" value="ETH" checked><div class="check-box"></div><span>ETH</span></label>
+            <label class="check-item"><input type="checkbox" name="coins" value="SOL"><div class="check-box"></div><span>SOL</span></label>
+            <label class="check-item"><input type="checkbox" name="coins" value="BNB"><div class="check-box"></div><span>BNB</span></label>
+            <label class="check-item"><input type="checkbox" name="coins" value="XRP"><div class="check-box"></div><span>XRP</span></label>
+            <label class="check-item"><input type="checkbox" name="coins" value="ADA"><div class="check-box"></div><span>ADA</span></label>
+            <label class="check-item"><input type="checkbox" name="coins" value="DOGE"><div class="check-box"></div><span>DOGE</span></label>
+            <label class="check-item"><input type="checkbox" name="coins" value="USDT"><div class="check-box"></div><span>USDT</span></label>
+          </div>
+          <div class="field" style="margin-top:10px">
+            <input type="text" name="extra_coins" placeholder="Other coins (comma separated): LINK, MATIC, ...">
+          </div>
+        </div>
+
+        <div class="section-label" style="margin-top:20px">Order Types & Price Feed</div>
+        <div class="field-grid">
+          <div class="field">
+            <label>Supported Order Types</label>
+            <div class="check-group">
+              <label class="check-item"><input type="checkbox" name="orders" value="Market" checked><div class="check-box"></div><span>Market</span></label>
+              <label class="check-item"><input type="checkbox" name="orders" value="Limit"><div class="check-box"></div><span>Limit</span></label>
+              <label class="check-item"><input type="checkbox" name="orders" value="Stop Loss"><div class="check-box"></div><span>Stop Loss</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Price Data API <span>*</span></label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="price_api" value="Binance" required><div class="radio-dot"></div><span>Binance</span></label>
+              <label class="radio-item"><input type="radio" name="price_api" value="CoinGecko"><div class="radio-dot"></div><span>CoinGecko</span></label>
+              <label class="radio-item"><input type="radio" name="price_api" value="CoinMarketCap"><div class="radio-dot"></div><span>CMC</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-grid" style="margin-top:16px">
+          <div class="field">
+            <label>Price Update Frequency</label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="update_freq" value="1 sec"><div class="radio-dot"></div><span>1 sec</span></label>
+              <label class="radio-item"><input type="radio" name="update_freq" value="5 sec"><div class="radio-dot"></div><span>5 sec</span></label>
+              <label class="radio-item"><input type="radio" name="update_freq" value="10 sec"><div class="radio-dot"></div><span>10 sec</span></label>
+              <label class="radio-item"><input type="radio" name="update_freq" value="1 min"><div class="radio-dot"></div><span>1 min</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-label" style="margin-top:20px">Leaderboard & Tournament</div>
+        <div class="field-grid">
+          <div class="field">
+            <label>Ranking Metric</label>
+            <div class="check-group">
+              <label class="check-item"><input type="checkbox" name="ranking" value="Total Profit"><div class="check-box"></div><span>Total Profit</span></label>
+              <label class="check-item"><input type="checkbox" name="ranking" value="ROI"><div class="check-box"></div><span>ROI %</span></label>
+              <label class="check-item"><input type="checkbox" name="ranking" value="Win Rate"><div class="check-box"></div><span>Win Rate</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Leaderboard Reset</label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="lb_reset" value="Daily"><div class="radio-dot"></div><span>Daily</span></label>
+              <label class="radio-item"><input type="radio" name="lb_reset" value="Weekly"><div class="radio-dot"></div><span>Weekly</span></label>
+              <label class="radio-item"><input type="radio" name="lb_reset" value="Monthly"><div class="radio-dot"></div><span>Monthly</span></label>
+              <label class="radio-item"><input type="radio" name="lb_reset" value="Never"><div class="radio-dot"></div><span>Never</span></label>
+            </div>
+          </div>
+        </div>
+        <div class="field-grid" style="margin-top:16px">
+          <div class="field">
+            <label>Tournament Entry</label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="tournament_entry" value="Free"><div class="radio-dot"></div><span>Free</span></label>
+              <label class="radio-item"><input type="radio" name="tournament_entry" value="Paid"><div class="radio-dot"></div><span>Paid</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Tournament Rewards</label>
+            <div class="check-group">
+              <label class="check-item"><input type="checkbox" name="rewards" value="Points"><div class="check-box"></div><span>Points</span></label>
+              <label class="check-item"><input type="checkbox" name="rewards" value="NFT"><div class="check-box"></div><span>NFT</span></label>
+              <label class="check-item"><input type="checkbox" name="rewards" value="Crypto"><div class="check-box"></div><span>Crypto</span></label>
+              <label class="check-item"><input type="checkbox" name="rewards" value="Gift Card"><div class="check-box"></div><span>Gift Card</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-label" style="margin-top:20px">Advanced Trading Logic</div>
+        <div class="field-grid cols3">
+          <div class="field">
+            <label>Maker Fee (%)</label>
+            <input type="number" name="maker_fee" placeholder="0.02" step="0.01" min="0">
+          </div>
+          <div class="field">
+            <label>Taker Fee (%)</label>
+            <input type="number" name="taker_fee" placeholder="0.05" step="0.01" min="0">
+          </div>
+          <div class="field">
+            <label>Max Leverage (x)</label>
+            <input type="number" name="max_leverage_x" placeholder="10" min="1" step="1">
+          </div>
+        </div>
+        <div class="field-grid" style="margin-top:16px">
+          <div class="field">
+            <label>PNL Calculation Method <span>*</span></label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="pnl_method" value="Mark-to-Market" required><div class="radio-dot"></div><span>Mark-to-Market</span></label>
+              <label class="radio-item"><input type="radio" name="pnl_method" value="Realized + Unrealized"><div class="radio-dot"></div><span>Realized + Unrealized</span></label>
+              <label class="radio-item"><input type="radio" name="pnl_method" value="Competition Score Formula"><div class="radio-dot"></div><span>Competition Formula</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Liquidation / Margin Rule <span>*</span></label>
+            <select name="liquidation_rule" required>
+              <option value="">— Select —</option>
+              <option>Not Applicable</option>
+              <option>Maintenance Margin Liquidation</option>
+              <option>Margin Call + Grace Period</option>
+              <option>Hard Liquidation Engine</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-grid" style="margin-top:16px">
+          <div class="field">
+            <label>Slippage Model <span>*</span></label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="slippage_model" value="None" required><div class="radio-dot"></div><span>None</span></label>
+              <label class="radio-item"><input type="radio" name="slippage_model" value="Fixed Bps"><div class="radio-dot"></div><span>Fixed Bps</span></label>
+              <label class="radio-item"><input type="radio" name="slippage_model" value="Order Book Depth Based"><div class="radio-dot"></div><span>Order Book Based</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Position Limits / Risk Limits</label>
+            <textarea name="position_limits" placeholder="e.g. max 3 open positions/user, per-symbol notional cap, daily loss limit..."></textarea>
+          </div>
+        </div>
+
+        <div class="section-label" style="margin-top:20px">Market Data Reliability</div>
+        <div class="field-grid">
+          <div class="field">
+            <label>Backup Data Sources</label>
+            <div class="check-group">
+              <label class="check-item"><input type="checkbox" name="data_fallbacks" value="Binance"><div class="check-box"></div><span>Binance</span></label>
+              <label class="check-item"><input type="checkbox" name="data_fallbacks" value="CoinGecko"><div class="check-box"></div><span>CoinGecko</span></label>
+              <label class="check-item"><input type="checkbox" name="data_fallbacks" value="CoinMarketCap"><div class="check-box"></div><span>CoinMarketCap</span></label>
+              <label class="check-item"><input type="checkbox" name="data_fallbacks" value="Internal Cache"><div class="check-box"></div><span>Internal Cache</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Price Staleness Tolerance (sec) <span>*</span></label>
+            <input type="number" name="price_staleness_sec" min="1" placeholder="10" required>
+          </div>
+        </div>
+        <div class="field-grid" style="margin-top:16px">
+          <div class="field">
+            <label>Upstream API Rate Limit Strategy</label>
+            <select name="api_rate_plan">
+              <option value="">— Select —</option>
+              <option>Retry + Exponential Backoff</option>
+              <option>Queue + Throttle</option>
+              <option>Failover to Backup Provider</option>
+              <option>Cache-First Mode</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Behavior During Data Outage <span>*</span></label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="downtime_behavior" value="Freeze New Orders" required><div class="radio-dot"></div><span>Freeze Orders</span></label>
+              <label class="radio-item"><input type="radio" name="downtime_behavior" value="Use Last Known Price"><div class="radio-dot"></div><span>Use Cached Price</span></label>
+              <label class="radio-item"><input type="radio" name="downtime_behavior" value="Auto Failover"><div class="radio-dot"></div><span>Auto Failover</span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 3 -->
+    <div class="phase-card p3">
+      <div class="phase-header" onclick="togglePhase(this)">
+        <div class="phase-num">P3</div>
+        <div><div class="phase-title">Non-Functional Requirements</div><div class="phase-subtitle">Performance, security & data retention</div></div>
+        <div class="phase-arrow">▾</div>
+      </div>
+      <div class="phase-body">
+        <div class="field-grid">
+          <div class="field">
+            <label>Expected Concurrent Users <span>*</span></label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="concurrent" value="500" required><div class="radio-dot"></div><span>500</span></label>
+              <label class="radio-item"><input type="radio" name="concurrent" value="5,000"><div class="radio-dot"></div><span>5,000</span></label>
+              <label class="radio-item"><input type="radio" name="concurrent" value="50,000"><div class="radio-dot"></div><span>50,000</span></label>
+              <label class="radio-item"><input type="radio" name="concurrent" value="50,000+"><div class="radio-dot"></div><span>50,000+</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Admin Access Control</label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="access_control" value="Role Based"><div class="radio-dot"></div><span>Role Based</span></label>
+              <label class="radio-item"><input type="radio" name="access_control" value="Single Admin"><div class="radio-dot"></div><span>Single Admin</span></label>
+              <label class="radio-item"><input type="radio" name="access_control" value="None"><div class="radio-dot"></div><span>None</span></label>
+            </div>
+          </div>
+        </div>
+        <div class="field-grid" style="margin-top:16px">
+          <div class="field">
+            <label>Data Retention Period</label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="data_retention" value="30 days"><div class="radio-dot"></div><span>30 days</span></label>
+              <label class="radio-item"><input type="radio" name="data_retention" value="90 days"><div class="radio-dot"></div><span>90 days</span></label>
+              <label class="radio-item"><input type="radio" name="data_retention" value="1 year"><div class="radio-dot"></div><span>1 year</span></label>
+              <label class="radio-item"><input type="radio" name="data_retention" value="Indefinitely"><div class="radio-dot"></div><span>Indefinitely</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Daily Backup Required?</label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="backup" value="Yes"><div class="radio-dot"></div><span>Yes</span></label>
+              <label class="radio-item"><input type="radio" name="backup" value="No"><div class="radio-dot"></div><span>No</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-label" style="margin-top:20px">SLO / Disaster Recovery Targets</div>
+        <div class="field-grid cols3">
+          <div class="field">
+            <label>Availability Target <span>*</span></label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="availability_target" value="99.5%" required><div class="radio-dot"></div><span>99.5%</span></label>
+              <label class="radio-item"><input type="radio" name="availability_target" value="99.9%"><div class="radio-dot"></div><span>99.9%</span></label>
+              <label class="radio-item"><input type="radio" name="availability_target" value="99.95%"><div class="radio-dot"></div><span>99.95%</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <label>p95 API Latency Target (ms) <span>*</span></label>
+            <input type="number" name="p95_latency_ms" placeholder="300" min="1" required>
+          </div>
+          <div class="field">
+            <label>Max Order Execution Delay (ms)</label>
+            <input type="number" name="max_exec_delay_ms" placeholder="500" min="1">
+          </div>
+        </div>
+        <div class="field-grid" style="margin-top:16px">
+          <div class="field">
+            <label>RTO (minutes) <span>*</span></label>
+            <input type="number" name="rto_minutes" placeholder="30" min="1" required>
+          </div>
+          <div class="field">
+            <label>RPO (minutes) <span>*</span></label>
+            <input type="number" name="rpo_minutes" placeholder="5" min="0" required>
+          </div>
+          <div class="field">
+            <label>DR Test Cadence</label>
+            <select name="dr_test_cadence">
+              <option value="">— Select —</option>
+              <option>Monthly</option>
+              <option>Quarterly</option>
+              <option>Bi-Annually</option>
+              <option>Annually</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="section-label" style="margin-top:20px">Security & Anti-Cheat Controls</div>
+        <div class="field-grid">
+          <div class="field">
+            <label>Security Baseline Controls</label>
+            <div class="check-group">
+              <label class="check-item"><input type="checkbox" name="security_controls" value="TLS 1.2+"><div class="check-box"></div><span>TLS 1.2+</span></label>
+              <label class="check-item"><input type="checkbox" name="security_controls" value="Encryption at Rest"><div class="check-box"></div><span>Encryption at Rest</span></label>
+              <label class="check-item"><input type="checkbox" name="security_controls" value="WAF / DDoS Protection"><div class="check-box"></div><span>WAF / DDoS</span></label>
+              <label class="check-item"><input type="checkbox" name="security_controls" value="Secrets Vault"><div class="check-box"></div><span>Secrets Vault</span></label>
+              <label class="check-item"><input type="checkbox" name="security_controls" value="Audit Logging"><div class="check-box"></div><span>Audit Logging</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Audit Log Retention <span>*</span></label>
+            <select name="audit_log_retention" required>
+              <option value="">— Select —</option>
+              <option>90 days</option>
+              <option>180 days</option>
+              <option>1 year</option>
+              <option>2 years</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-grid" style="margin-top:16px">
+          <div class="field">
+            <label>Anti-Cheat Features</label>
+            <div class="check-group">
+              <label class="check-item"><input type="checkbox" name="anti_cheat" value="Device Fingerprinting"><div class="check-box"></div><span>Device Fingerprinting</span></label>
+              <label class="check-item"><input type="checkbox" name="anti_cheat" value="IP Velocity Rules"><div class="check-box"></div><span>IP Velocity Rules</span></label>
+              <label class="check-item"><input type="checkbox" name="anti_cheat" value="Abnormal PNL Detection"><div class="check-box"></div><span>Abnormal PNL Detection</span></label>
+              <label class="check-item"><input type="checkbox" name="anti_cheat" value="Bot Pattern Detection"><div class="check-box"></div><span>Bot Detection</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Multi-Account Policy <span>*</span></label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="multi_account_policy" value="Block" required><div class="radio-dot"></div><span>Block</span></label>
+              <label class="radio-item"><input type="radio" name="multi_account_policy" value="Allow with Monitoring"><div class="radio-dot"></div><span>Allow + Monitor</span></label>
+              <label class="radio-item"><input type="radio" name="multi_account_policy" value="No Restriction"><div class="radio-dot"></div><span>No Restriction</span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 4 -->
+    <div class="phase-card p4">
+      <div class="phase-header" onclick="togglePhase(this)">
+        <div class="phase-num">P4</div>
+        <div><div class="phase-title">System Architecture</div><div class="phase-subtitle">Backend, database & hosting preferences</div></div>
+        <div class="phase-arrow">▾</div>
+      </div>
+      <div class="phase-body">
+        <div class="field-grid cols3">
+          <div class="field">
+            <label>Backend Technology <span>*</span></label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="backend" value="Node.js" required><div class="radio-dot"></div><span>Node.js</span></label>
+              <label class="radio-item"><input type="radio" name="backend" value="Java Spring"><div class="radio-dot"></div><span>Java Spring</span></label>
+              <label class="radio-item"><input type="radio" name="backend" value="Python"><div class="radio-dot"></div><span>Python</span></label>
+              <label class="radio-item"><input type="radio" name="backend" value="Go"><div class="radio-dot"></div><span>Go</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Database</label>
+            <div class="check-group">
+              <label class="check-item"><input type="checkbox" name="database" value="PostgreSQL"><div class="check-box"></div><span>PostgreSQL</span></label>
+              <label class="check-item"><input type="checkbox" name="database" value="MongoDB"><div class="check-box"></div><span>MongoDB</span></label>
+              <label class="check-item"><input type="checkbox" name="database" value="Redis"><div class="check-box"></div><span>Redis Cache</span></label>
+              <label class="check-item"><input type="checkbox" name="database" value="MySQL"><div class="check-box"></div><span>MySQL</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <label>Cloud Hosting</label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="hosting" value="AWS"><div class="radio-dot"></div><span>AWS</span></label>
+              <label class="radio-item"><input type="radio" name="hosting" value="GCP"><div class="radio-dot"></div><span>GCP</span></label>
+              <label class="radio-item"><input type="radio" name="hosting" value="Azure"><div class="radio-dot"></div><span>Azure</span></label>
+              <label class="radio-item"><input type="radio" name="hosting" value="DigitalOcean"><div class="radio-dot"></div><span>DigitalOcean</span></label>
+            </div>
+          </div>
+        </div>
+        <div class="field" style="margin-top:20px">
+          <label>Architecture Pattern</label>
+          <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="arch" value="Monolith"><div class="radio-dot"></div><span>Monolith</span></label>
+            <label class="radio-item"><input type="radio" name="arch" value="Microservices"><div class="radio-dot"></div><span>Microservices</span></label>
+            <label class="radio-item"><input type="radio" name="arch" value="Serverless"><div class="radio-dot"></div><span>Serverless</span></label>
+          </div>
+        </div>
+        <div class="field" style="margin-top:20px">
+          <label>Additional Tech Notes</label>
+          <textarea name="tech_notes" placeholder="Any specific tech preferences, constraints or existing systems..."></textarea>
+        </div>
+
+        <div class="section-label" style="margin-top:20px">Operations & Observability</div>
+        <div class="field-grid">
+          <div class="field">
+            <label>Monitoring Stack</label>
+            <input type="text" name="monitoring_stack" placeholder="e.g. Prometheus + Grafana + Loki">
+          </div>
+          <div class="field">
+            <label>Alert Channels</label>
+            <div class="check-group">
+              <label class="check-item"><input type="checkbox" name="alert_channels" value="Telegram"><div class="check-box"></div><span>Telegram</span></label>
+              <label class="check-item"><input type="checkbox" name="alert_channels" value="Slack"><div class="check-box"></div><span>Slack</span></label>
+              <label class="check-item"><input type="checkbox" name="alert_channels" value="Email"><div class="check-box"></div><span>Email</span></label>
+              <label class="check-item"><input type="checkbox" name="alert_channels" value="PagerDuty"><div class="check-box"></div><span>PagerDuty</span></label>
+            </div>
+          </div>
+        </div>
+        <div class="field-grid" style="margin-top:16px">
+          <div class="field">
+            <label>Environment Strategy <span>*</span></label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="environment_strategy" value="Dev + Staging + Prod" required><div class="radio-dot"></div><span>Dev/Staging/Prod</span></label>
+              <label class="radio-item"><input type="radio" name="environment_strategy" value="Single Shared Env"><div class="radio-dot"></div><span>Single Shared Env</span></label>
+              <label class="radio-item"><input type="radio" name="environment_strategy" value="Prod Only"><div class="radio-dot"></div><span>Prod Only</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <label>CI/CD Requirement</label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="cicd_required" value="Required"><div class="radio-dot"></div><span>Required</span></label>
+              <label class="radio-item"><input type="radio" name="cicd_required" value="Optional"><div class="radio-dot"></div><span>Optional</span></label>
+              <label class="radio-item"><input type="radio" name="cicd_required" value="Not Needed"><div class="radio-dot"></div><span>Not Needed</span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 5 -->
+    <div class="phase-card p5">
+      <div class="phase-header" onclick="togglePhase(this)">
+        <div class="phase-num">P5</div>
+        <div><div class="phase-title">Risks & Timeline</div><div class="phase-subtitle">Known risks, deadlines & special notes</div></div>
+        <div class="phase-arrow">▾</div>
+      </div>
+      <div class="phase-body">
+        <div class="field-grid">
+          <div class="field">
+            <label>Project Deadline <span>*</span></label>
+            <input type="date" name="deadline" required>
+          </div>
+          <div class="field">
+            <label>Budget Range</label>
+            <select name="budget">
+              <option value="">— Select range —</option>
+              <option>Under $5,000</option>
+              <option>$5,000 – $20,000</option>
+              <option>$20,000 – $50,000</option>
+              <option>$50,000 – $100,000</option>
+              <option>$100,000+</option>
+            </select>
+          </div>
+        </div>
+        <div class="field" style="margin-top:16px">
+          <label>Known Risks / Concerns</label>
+          <div class="check-group">
+            <label class="check-item"><input type="checkbox" name="risks" value="API Rate Limits"><div class="check-box"></div><span>API Rate Limits</span></label>
+            <label class="check-item"><input type="checkbox" name="risks" value="Telegram Traffic Spike"><div class="check-box"></div><span>Telegram Traffic Spike</span></label>
+            <label class="check-item"><input type="checkbox" name="risks" value="WebSocket Overload"><div class="check-box"></div><span>WebSocket Overload</span></label>
+            <label class="check-item"><input type="checkbox" name="risks" value="Data Security"><div class="check-box"></div><span>Data Security</span></label>
+            <label class="check-item"><input type="checkbox" name="risks" value="Regulatory Compliance"><div class="check-box"></div><span>Regulatory Compliance</span></label>
+          </div>
+        </div>
+        <div class="field" style="margin-top:16px">
+          <label>Additional Notes</label>
+          <textarea name="extra_notes" placeholder="Any other requirements, concerns, or special instructions..."></textarea>
+        </div>
+
+        <div class="section-label" style="margin-top:20px">Delivery & Acceptance</div>
+        <div class="field-grid">
+          <div class="field">
+            <label>MVP Scope (Must-Have) <span>*</span></label>
+            <textarea name="mvp_scope" placeholder="List the minimum features required for MVP launch..." required></textarea>
+          </div>
+          <div class="field">
+            <label>Out of Scope (v1)</label>
+            <textarea name="out_of_scope" placeholder="Features explicitly excluded from initial release..."></textarea>
+          </div>
+        </div>
+        <div class="field-grid" style="margin-top:16px">
+          <div class="field">
+            <label>Acceptance Criteria <span>*</span></label>
+            <textarea name="acceptance_criteria" placeholder="Define objective go-live criteria: uptime, test pass %, latency, security signoff..." required></textarea>
+          </div>
+          <div class="field">
+            <label>Business Success Metrics <span>*</span></label>
+            <textarea name="success_metrics" placeholder="e.g. DAU, retention, tournament participation, conversion..." required></textarea>
+          </div>
+        </div>
+        <div class="field-grid" style="margin-top:16px">
+          <div class="field">
+            <label>Final Sign-off Authority <span>*</span></label>
+            <input type="text" name="signoff_authority" placeholder="Name/Role who can approve production release" required>
+          </div>
+          <div class="field">
+            <label>Target Launch Window</label>
+            <select name="launch_window">
+              <option value="">— Select —</option>
+              <option>Alpha (Internal)</option>
+              <option>Closed Beta</option>
+              <option>Public Beta</option>
+              <option>General Availability</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBMISSION -->
+    <div class="form-footer">
+      <div class="section-label" style="margin-top:0">Requester Information</div>
+      <div class="footer-grid">
+        <div class="field">
+          <label>Full Name <span>*</span></label>
+          <input type="text" name="requester_name" placeholder="Your full name" required>
+        </div>
+        <div class="field">
+          <label>Email <span>*</span></label>
+          <input type="email" name="requester_email" placeholder="your@email.com" required>
+        </div>
+        <div class="field">
+          <label>Role / Title</label>
+          <input type="text" name="requester_role" placeholder="e.g. Product Manager, BA Lead">
+        </div>
+        <div class="field">
+          <label>Submission Date</label>
+          <input type="text" name="submission_date" id="submissionDate" readonly style="color:var(--text2)">
+        </div>
+      </div>
+
+      <div class="section-label">Signature <span style="color:var(--red);font-size:12px">*</span></div>
+      <p class="field-hint" style="margin-bottom:10px;color:var(--text3)">Draw your signature below using mouse or touch.</p>
+      <div class="sig-container">
+        <canvas id="sigCanvas" height="140"></canvas>
+        <div class="sig-actions">
+          <span class="sig-hint" id="sigHint">Sign here ✦</span>
+          <button type="button" class="sig-clear" onclick="clearSig()">Clear</button>
+        </div>
+      </div>
+      <input type="hidden" name="signature_data" id="signatureData">
+
+      <div style="margin-top:24px">
+        <button type="button" class="quick-fill-btn" onclick="fillSampleData()">⚡ Auto Fill Sample Data</button>
+      </div>
+      <div style="margin-top:10px">
+        <button type="submit" class="submit-btn">Submit Business Requirement Request →</button>
+      </div>
+      <div style="margin-top:10px">
+        <label class="check-item" style="display:flex;gap:10px;align-items:center;max-width:100%">
+          <input type="checkbox" id="dryRunOnly" checked>
+          <div class="check-box"></div>
+          <span style="font-size:12px;color:var(--text2)">Check only mode: do not submit to Google Sheets</span>
+        </label>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<div class="success-overlay" id="successOverlay">
+  <div class="success-icon">✓</div>
+  <div class="success-title">Request Submitted!</div>
+  <p class="success-sub">Your Business Requirement Form has been completed successfully. Download the summary below.</p>
+  <button class="download-btn" onclick="downloadSummary()">⬇ Download BRD Summary</button>
+  <br>
+  <button class="new-form-btn" onclick="resetForm()">Submit another request</button>
+</div>
+
+<script>
+  // Set today's date
+  document.getElementById('submissionDate').value = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  // Toggle phases
+  function togglePhase(header) {
+    const body = header.nextElementSibling;
+    header.classList.toggle('open');
+    body.classList.toggle('open');
+    updateProgress();
+  }
+
+  // Progress tracking
+  function updateProgress() {
+    const required = document.querySelectorAll('[required]');
+    let filled = 0;
+    required.forEach(el => {
+      if (el.type === 'radio' || el.type === 'checkbox') {
+        const name = el.name;
+        if (document.querySelector(`[name="${name}"]:checked`)) filled++;
+      } else if (el.value.trim()) filled++;
+    });
+    const unique = [...new Set([...required].map(e => e.name))];
+    let uniqueFilled = 0;
+    unique.forEach(name => {
+      const el = document.querySelector(`[name="${name}"]`);
+      if (!el) return;
+      if (el.type === 'radio' || el.type === 'checkbox') {
+        if (document.querySelector(`[name="${name}"]:checked`)) uniqueFilled++;
+      } else if (el.value.trim()) uniqueFilled++;
+    });
+    const pct = Math.min(100, Math.round((uniqueFilled / unique.length) * 100));
+    document.getElementById('progress').style.width = pct + '%';
+  }
+
+  document.querySelectorAll('input, select, textarea').forEach(el => {
+    el.addEventListener('change', updateProgress);
+    el.addEventListener('input', updateProgress);
+  });
+
+  // Signature pad
+  const canvas = document.getElementById('sigCanvas');
+  const ctx = canvas.getContext('2d');
+  let drawing = false, hasSig = false;
+
+  function resizeCanvas() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const savedImg = canvas.toDataURL();
+    canvas.width = rect.width * dpr;
+    canvas.height = 140 * dpr;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = '140px';
+    ctx.scale(dpr, dpr);
+    ctx.strokeStyle = '#60a5fa';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  function getPos(e) {
+    const r = canvas.getBoundingClientRect();
+    if (e.touches) return { x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top };
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+
+  canvas.addEventListener('mousedown', e => { drawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); });
+  canvas.addEventListener('mousemove', e => { if (!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); hasSig = true; document.getElementById('sigHint').textContent = '✓ Signature captured'; });
+  canvas.addEventListener('mouseup', () => { drawing = false; saveSignature(); });
+  canvas.addEventListener('mouseleave', () => { drawing = false; });
+
+  canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); });
+  canvas.addEventListener('touchmove', e => { e.preventDefault(); if (!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); hasSig = true; document.getElementById('sigHint').textContent = '✓ Signature captured'; });
+  canvas.addEventListener('touchend', () => { drawing = false; saveSignature(); });
+
+  function saveSignature() {
+    document.getElementById('signatureData').value = canvas.toDataURL('image/png');
+  }
+
+  function clearSig() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    hasSig = false;
+    document.getElementById('signatureData').value = '';
+    document.getElementById('sigHint').textContent = 'Sign here ✦';
+  }
+
+  function triggerFieldEvents(el) {
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  function setFieldValue(name, value) {
+    const fields = [...document.querySelectorAll(`[name="${name}"]`)];
+    if (!fields.length) return;
+
+    const first = fields[0];
+    const values = Array.isArray(value) ? value : [value];
+
+    if (first.type === 'radio' || first.type === 'checkbox') {
+      fields.forEach((f) => {
+        f.checked = values.includes(f.value);
+        triggerFieldEvents(f);
+      });
+      return;
+    }
+
+    first.value = value;
+    triggerFieldEvents(first);
+  }
+
+  function fillSampleSignature() {
+    clearSig();
+    ctx.beginPath();
+    ctx.moveTo(25, 92);
+    ctx.bezierCurveTo(90, 42, 165, 126, 238, 88);
+    ctx.bezierCurveTo(302, 62, 375, 116, 450, 78);
+    ctx.stroke();
+    hasSig = true;
+    saveSignature();
+    document.getElementById('sigHint').textContent = '✓ Signature captured (auto-fill)';
+  }
+
+  function fillSampleData() {
+    const now = new Date();
+    const deadline = new Date(now.getTime() + (1000 * 60 * 60 * 24 * 90)).toISOString().slice(0, 10);
+
+    setFieldValue('project_name', 'Crypto Trading Simulator v2');
+    setFieldValue('client_name', 'Techey');
+    setFieldValue('project_goal', 'Build a scalable crypto trading simulator with leaderboard, tournaments, and anti-cheat controls.');
+    setFieldValue('purpose', ['Crypto Education', 'Trading Competition']);
+    setFieldValue('user_type', 'Beginner Trader');
+    setFieldValue('user_scale', '10,000');
+    setFieldValue('revenue', ['Ads', 'Competition Fee']);
+    setFieldValue('jurisdiction', 'Southeast Asia');
+    setFieldValue('legal_mode', 'Simulation Only');
+    setFieldValue('kyc_aml', 'Optional');
+    setFieldValue('age_gate', '18+');
+    setFieldValue('restricted_regions', 'OFAC-sanctioned regions');
+
+    setFieldValue('initial_balance', '10000');
+    setFieldValue('trading_fee', '0.1');
+    setFieldValue('maker_fee', '0.02');
+    setFieldValue('taker_fee', '0.05');
+    setFieldValue('leverage', 'No');
+    setFieldValue('max_leverage_x', '5');
+    setFieldValue('shortsell', 'No');
+    setFieldValue('auth', 'Telegram Only');
+    setFieldValue('coins', ['BTC', 'ETH', 'SOL']);
+    setFieldValue('extra_coins', 'LINK, MATIC');
+    setFieldValue('orders', ['Market', 'Limit']);
+    setFieldValue('price_api', 'Binance');
+    setFieldValue('update_freq', '5 sec');
+    setFieldValue('pnl_method', 'Mark-to-Market');
+    setFieldValue('liquidation_rule', 'Not Applicable');
+    setFieldValue('slippage_model', 'Fixed Bps');
+    setFieldValue('position_limits', 'Max 3 positions per user; daily loss cap 10%.');
+    setFieldValue('data_fallbacks', ['CoinGecko', 'Internal Cache']);
+    setFieldValue('price_staleness_sec', '10');
+    setFieldValue('api_rate_plan', 'Retry + Exponential Backoff');
+    setFieldValue('downtime_behavior', 'Freeze New Orders');
+    setFieldValue('ranking', ['ROI']);
+    setFieldValue('lb_reset', 'Weekly');
+    setFieldValue('tournament_entry', 'Free');
+    setFieldValue('rewards', ['Points']);
+
+    setFieldValue('concurrent', '5,000');
+    setFieldValue('availability_target', '99.9%');
+    setFieldValue('p95_latency_ms', '300');
+    setFieldValue('max_exec_delay_ms', '500');
+    setFieldValue('rto_minutes', '30');
+    setFieldValue('rpo_minutes', '5');
+    setFieldValue('dr_test_cadence', 'Quarterly');
+    setFieldValue('access_control', 'Role Based');
+    setFieldValue('data_retention', '1 year');
+    setFieldValue('backup', 'Yes');
+    setFieldValue('security_controls', ['TLS 1.2+', 'Encryption at Rest', 'Audit Logging']);
+    setFieldValue('audit_log_retention', '1 year');
+    setFieldValue('anti_cheat', ['Device Fingerprinting', 'Bot Pattern Detection']);
+    setFieldValue('multi_account_policy', 'Block');
+
+    setFieldValue('backend', 'Node.js');
+    setFieldValue('database', ['PostgreSQL', 'Redis']);
+    setFieldValue('hosting', 'AWS');
+    setFieldValue('arch', 'Microservices');
+    setFieldValue('tech_notes', 'Use websocket price stream and periodic reconciliation jobs.');
+    setFieldValue('monitoring_stack', 'Prometheus + Grafana + Loki');
+    setFieldValue('alert_channels', ['Telegram', 'Email']);
+    setFieldValue('environment_strategy', 'Dev + Staging + Prod');
+    setFieldValue('cicd_required', 'Required');
+
+    setFieldValue('deadline', deadline);
+    setFieldValue('budget', '$20,000 – $50,000');
+    setFieldValue('risks', ['API Rate Limits', 'Data Security']);
+    setFieldValue('extra_notes', 'Auto-filled sample for QA testing.');
+    setFieldValue('mvp_scope', 'Telegram auth, simulated spot trading, portfolio, leaderboard, tournament.');
+    setFieldValue('out_of_scope', 'Real fund custody and copy trading in v1.');
+    setFieldValue('acceptance_criteria', 'No P0/P1 bugs, p95 latency under target, security checklist signed off.');
+    setFieldValue('success_metrics', 'D7 retention > 20%, 5k+ active users in first month.');
+    setFieldValue('signoff_authority', 'Product Owner');
+    setFieldValue('launch_window', 'Closed Beta');
+
+    setFieldValue('requester_name', 'QA Tester');
+    setFieldValue('requester_email', 'qa@example.com');
+    setFieldValue('requester_role', 'BA/SA');
+    document.getElementById('submissionDate').value = now.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    triggerFieldEvents(document.getElementById('submissionDate'));
+
+    fillSampleSignature();
+    updateProgress();
+    alert('Sample data filled. Review and click Submit.');
+  }
+
+  // ── Google Sheets Integration ──────────────────────────────
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzDC-mFg-VeTFhXbQLfLm2tbWgTpeC73V_eLWd-ZPZ7ndoyH4aFPjh-9I4kfDylVDD2/exec';
+
+  async function submitForm(e) {
+    e.preventDefault();
+
+    // 1. Validate critical requirements
+    if (!document.querySelector('[name="purpose"]:checked')) {
+      alert('Please select at least one Primary Purpose.');
+      return;
+    }
+
+    if (!hasSig) {
+      alert('Please add your signature before submitting.');
+      return;
+    }
+
+    // 2. Helper — get all checked values as CSV string
+    const getAll = (name) =>
+      [...document.querySelectorAll(`[name="${name}"]:checked`)]
+      .map(el => el.value).join(', ');
+
+    const fd = new FormData(document.getElementById('mainForm'));
+    const get = (name) => fd.get(name) || '';
+
+    // 3. Build payload
+    const payload = {
+      project_name:    get('project_name'),
+      client_name:     get('client_name'),
+      project_goal:    get('project_goal'),
+      purpose:         getAll('purpose'),
+      user_type:       get('user_type'),
+      user_scale:      get('user_scale'),
+      revenue:         getAll('revenue'),
+      jurisdiction:    get('jurisdiction'),
+      legal_mode:      get('legal_mode'),
+      kyc_aml:         get('kyc_aml'),
+      age_gate:        get('age_gate'),
+      restricted_regions: get('restricted_regions'),
+      initial_balance: get('initial_balance'),
+      trading_fee:     get('trading_fee'),
+      maker_fee:       get('maker_fee'),
+      taker_fee:       get('taker_fee'),
+      leverage:        get('leverage'),
+      max_leverage_x:  get('max_leverage_x'),
+      shortsell:       get('shortsell'),
+      auth:            get('auth'),
+      coins:           getAll('coins'),
+      extra_coins:     get('extra_coins'),
+      orders:          getAll('orders'),
+      price_api:       get('price_api'),
+      update_freq:     get('update_freq'),
+      slippage_model:  get('slippage_model'),
+      pnl_method:      get('pnl_method'),
+      liquidation_rule:get('liquidation_rule'),
+      position_limits: get('position_limits'),
+      data_fallbacks:  getAll('data_fallbacks'),
+      price_staleness_sec: get('price_staleness_sec'),
+      api_rate_plan:   get('api_rate_plan'),
+      downtime_behavior: get('downtime_behavior'),
+      ranking:         getAll('ranking'),
+      lb_reset:        get('lb_reset'),
+      tournament_entry:get('tournament_entry'),
+      rewards:         getAll('rewards'),
+      concurrent:      get('concurrent'),
+      availability_target: get('availability_target'),
+      p95_latency_ms:  get('p95_latency_ms'),
+      max_exec_delay_ms: get('max_exec_delay_ms'),
+      rto_minutes:     get('rto_minutes'),
+      rpo_minutes:     get('rpo_minutes'),
+      dr_test_cadence: get('dr_test_cadence'),
+      access_control:  get('access_control'),
+      data_retention:  get('data_retention'),
+      backup:          get('backup'),
+      security_controls: getAll('security_controls'),
+      audit_log_retention: get('audit_log_retention'),
+      anti_cheat:      getAll('anti_cheat'),
+      multi_account_policy: get('multi_account_policy'),
+      backend:         get('backend'),
+      database:        getAll('database'),
+      hosting:         get('hosting'),
+      arch:            get('arch'),
+      tech_notes:      get('tech_notes'),
+      monitoring_stack: get('monitoring_stack'),
+      alert_channels:  getAll('alert_channels'),
+      environment_strategy: get('environment_strategy'),
+      cicd_required:   get('cicd_required'),
+      deadline:        get('deadline'),
+      budget:          get('budget'),
+      risks:           getAll('risks'),
+      extra_notes:     get('extra_notes'),
+      mvp_scope:       get('mvp_scope'),
+      out_of_scope:    get('out_of_scope'),
+      acceptance_criteria: get('acceptance_criteria'),
+      success_metrics: get('success_metrics'),
+      signoff_authority: get('signoff_authority'),
+      launch_window:   get('launch_window'),
+      requester_name:  get('requester_name'),
+      requester_email: get('requester_email'),
+      requester_role:  get('requester_role'),
+      submission_date: get('submission_date'),
+      signature_data:  canvas.toDataURL('image/png')
+    };
+
+    const dryRunOnly = document.getElementById('dryRunOnly')?.checked;
+    if (dryRunOnly) {
+      console.log('[DRY RUN] Payload preview:', payload);
+      alert('Check only mode: validation passed and payload prepared. No data was sent to Google Sheets.');
+      return;
+    }
+
+    // 4. Show loading state
+    const btn = document.querySelector('.submit-btn');
+    const originalText = btn.textContent;
+    btn.textContent = '⏳ Submitting to Google Sheets...';
+    btn.disabled = true;
+    btn.style.opacity = '0.7';
+
+    try {
+      // 5. Send as text/plain JSON to avoid CORS preflight on localhost
+      const requestBody = JSON.stringify(payload);
+      let res;
+
+      try {
+        res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+          body: requestBody
+        });
+      } catch (corsErr) {
+        // Final fallback for strict CORS environments
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+          body: requestBody
+        });
+        document.getElementById('successOverlay').classList.add('show');
+        return;
+      }
+
+      const text = await res.text();
+      let result = null;
+      try { result = JSON.parse(text); } catch (_) {}
+
+      if (!res.ok) {
+        throw new Error(result?.msg || `HTTP ${res.status}`);
+      }
+      if (result && result.status && !['success', 'ok'].includes(String(result.status).toLowerCase())) {
+        throw new Error(result.msg || 'Apps Script returned an error');
+      }
+
+      document.getElementById('successOverlay').classList.add('show');
+    } catch (err) {
+      alert('⚠️ Submit failed.\n' + err.message);
+    } finally {
+      btn.textContent = originalText;
+      btn.disabled = false;
+      btn.style.opacity = '1';
+    }
+  }
+
+  function resetForm() {
+    document.getElementById('mainForm').reset();
+    clearSig();
+    document.getElementById('successOverlay').classList.remove('show');
+    document.getElementById('progress').style.width = '0%';
+    document.getElementById('submissionDate').value = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  // Download BRD Summary as plain text (simple approach)
+  function downloadSummary() {
+    const form = document.getElementById('mainForm');
+    const data = new FormData(form);
+    const get = (name) => {
+      const vals = data.getAll(name).filter(v => v && v !== '');
+      return vals.length ? vals.join(', ') : '—';
+    };
+
+    const lines = [
+      '╔══════════════════════════════════════════════════════════════╗',
+      '║         BUSINESS REQUIREMENT DOCUMENT (BRD) SUMMARY         ║',
+      '╚══════════════════════════════════════════════════════════════╝',
+      '',
+      `Date Submitted : ${get('submission_date')}`,
+      `Requester      : ${get('requester_name')} <${get('requester_email')}>`,
+      `Role           : ${get('requester_role')}`,
+      '',
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+      'PHASE 1 — BUSINESS UNDERSTANDING',
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+      `Project Name   : ${get('project_name')}`,
+      `Client         : ${get('client_name')}`,
+      `Project Goal   : ${get('project_goal')}`,
+      `Purpose        : ${get('purpose')}`,
+      `Target Users   : ${get('user_type')}`,
+      `User Scale     : ${get('user_scale')}`,
+      `Revenue Model  : ${get('revenue')}`,
+      `Jurisdiction   : ${get('jurisdiction')}`,
+      `Legal Mode     : ${get('legal_mode')}`,
+      `KYC / AML      : ${get('kyc_aml')}`,
+      `Age Gate       : ${get('age_gate')}`,
+      `Restricted Geo : ${get('restricted_regions')}`,
+      '',
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+      'PHASE 2 — FUNCTIONAL REQUIREMENTS',
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+      `Initial Balance: $${get('initial_balance')}`,
+      `Trading Fee    : ${get('trading_fee')}%`,
+      `Maker/Taker Fee: ${get('maker_fee')}% / ${get('taker_fee')}%`,
+      `Leverage       : ${get('leverage')}`,
+      `Max Leverage   : ${get('max_leverage_x')}x`,
+      `Short Selling  : ${get('shortsell')}`,
+      `Authentication : ${get('auth')}`,
+      `Coins          : ${get('coins')} ${get('extra_coins') !== '—' ? '+ ' + get('extra_coins') : ''}`,
+      `Order Types    : ${get('orders')}`,
+      `Price API      : ${get('price_api')}`,
+      `Update Freq    : ${get('update_freq')}`,
+      `Slippage Model : ${get('slippage_model')}`,
+      `PNL Method     : ${get('pnl_method')}`,
+      `Liquidation    : ${get('liquidation_rule')}`,
+      `Risk Limits    : ${get('position_limits')}`,
+      `Fallback Data  : ${get('data_fallbacks')}`,
+      `Staleness (sec): ${get('price_staleness_sec')}`,
+      `Rate Plan      : ${get('api_rate_plan')}`,
+      `Outage Policy  : ${get('downtime_behavior')}`,
+      `Ranking        : ${get('ranking')}`,
+      `LB Reset       : ${get('lb_reset')}`,
+      `Tournament     : ${get('tournament_entry')} entry | Rewards: ${get('rewards')}`,
+      '',
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+      'PHASE 3 — NON-FUNCTIONAL REQUIREMENTS',
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+      `Concurrent Users: ${get('concurrent')}`,
+      `Availability   : ${get('availability_target')}`,
+      `p95 Latency    : ${get('p95_latency_ms')} ms`,
+      `Exec Delay Max : ${get('max_exec_delay_ms')} ms`,
+      `RTO / RPO      : ${get('rto_minutes')} min / ${get('rpo_minutes')} min`,
+      `DR Test Cadence: ${get('dr_test_cadence')}`,
+      `Access Control : ${get('access_control')}`,
+      `Data Retention : ${get('data_retention')}`,
+      `Daily Backup   : ${get('backup')}`,
+      `Security Ctrl  : ${get('security_controls')}`,
+      `Audit Retention: ${get('audit_log_retention')}`,
+      `Anti-Cheat     : ${get('anti_cheat')}`,
+      `Multi-Account  : ${get('multi_account_policy')}`,
+      '',
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+      'PHASE 4 — SYSTEM ARCHITECTURE',
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+      `Backend        : ${get('backend')}`,
+      `Database       : ${get('database')}`,
+      `Hosting        : ${get('hosting')}`,
+      `Architecture   : ${get('arch')}`,
+      `Tech Notes     : ${get('tech_notes')}`,
+      `Monitoring     : ${get('monitoring_stack')}`,
+      `Alert Channels : ${get('alert_channels')}`,
+      `Env Strategy   : ${get('environment_strategy')}`,
+      `CI/CD          : ${get('cicd_required')}`,
+      '',
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+      'PHASE 5 — RISKS & TIMELINE',
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+      `Deadline       : ${get('deadline')}`,
+      `Budget         : ${get('budget')}`,
+      `Known Risks    : ${get('risks')}`,
+      `Extra Notes    : ${get('extra_notes')}`,
+      `MVP Scope      : ${get('mvp_scope')}`,
+      `Out of Scope   : ${get('out_of_scope')}`,
+      `Acceptance     : ${get('acceptance_criteria')}`,
+      `Success Metrics: ${get('success_metrics')}`,
+      `Signoff Owner  : ${get('signoff_authority')}`,
+      `Launch Window  : ${get('launch_window')}`,
+      '',
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+      'SIGNATURE',
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+      `Digitally signed by: ${get('requester_name')}`,
+      `Submitted on       : ${get('submission_date')}`,
+      '',
+      '[ Signature image captured as part of digital submission ]',
+      '',
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+      'This document was generated automatically from the BA/SA Requirement Form.',
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    ];
+
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `BRD_${get('project_name').replace(/\s+/g, '_')}_${new Date().toISOString().slice(0,10)}.txt`;
+    a.click();
+  }
+</script>
+</body>
+</html>
