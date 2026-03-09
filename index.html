@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BA/SA Business Requirement Form</title>
+<title>Business Requirement Form</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -263,22 +263,6 @@
   }
   .submit-btn:hover { opacity: 0.93; transform: translateY(-1px); box-shadow: 0 8px 28px rgba(59,130,246,0.4); }
   .submit-btn:active { transform: translateY(0); }
-  .quick-fill-btn {
-    width: 100%; padding: 11px 14px;
-    background: rgba(59,130,246,0.14);
-    border: 1px solid rgba(59,130,246,0.35);
-    border-radius: 10px;
-    color: #93c5fd; font-size: 13px; font-weight: 700;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    cursor: pointer; letter-spacing: 0.02em;
-    transition: background 0.2s, transform 0.15s, border-color 0.2s;
-  }
-  .quick-fill-btn:hover {
-    background: rgba(59,130,246,0.22);
-    border-color: rgba(59,130,246,0.5);
-    transform: translateY(-1px);
-  }
-
   /* PROGRESS */
   .progress-bar {
     position: sticky; top: 0; z-index: 100;
@@ -337,13 +321,12 @@
 
 <div class="page-wrapper">
   <div class="form-header">
-    <div class="header-badge">BA / SA Document</div>
     <h1>Business Requirement<br>Request Form</h1>
     <p class="header-sub">Complete all phases to generate a comprehensive requirement specification for your software project.</p>
     <div class="header-divider"></div>
   </div>
 
-  <form id="mainForm" onsubmit="submitForm(event)">
+  <form id="mainForm" onsubmit="submitForm(event)" autocomplete="off">
 
     <!-- PHASE 1 -->
     <div class="phase-card p1">
@@ -479,11 +462,11 @@
         <div class="field-grid cols3">
           <div class="field">
             <label>Initial Balance (USD) <span>*</span></label>
-            <input type="number" name="initial_balance" placeholder="10000" value="10000" required>
+            <input type="number" name="initial_balance" placeholder="10000" required>
           </div>
           <div class="field">
             <label>Trading Fee (%)</label>
-            <input type="number" name="trading_fee" placeholder="0.1" step="0.01" value="0.1">
+            <input type="number" name="trading_fee" placeholder="0.1" step="0.01">
           </div>
           <div class="field">
             <label>Leverage Allowed?</label>
@@ -514,8 +497,8 @@
         <div class="section-label" style="margin-top:20px">Available Coins</div>
         <div class="field">
           <div class="check-group">
-            <label class="check-item"><input type="checkbox" name="coins" value="BTC" checked><div class="check-box"></div><span>BTC</span></label>
-            <label class="check-item"><input type="checkbox" name="coins" value="ETH" checked><div class="check-box"></div><span>ETH</span></label>
+            <label class="check-item"><input type="checkbox" name="coins" value="BTC"><div class="check-box"></div><span>BTC</span></label>
+            <label class="check-item"><input type="checkbox" name="coins" value="ETH"><div class="check-box"></div><span>ETH</span></label>
             <label class="check-item"><input type="checkbox" name="coins" value="SOL"><div class="check-box"></div><span>SOL</span></label>
             <label class="check-item"><input type="checkbox" name="coins" value="BNB"><div class="check-box"></div><span>BNB</span></label>
             <label class="check-item"><input type="checkbox" name="coins" value="XRP"><div class="check-box"></div><span>XRP</span></label>
@@ -533,7 +516,7 @@
           <div class="field">
             <label>Supported Order Types</label>
             <div class="check-group">
-              <label class="check-item"><input type="checkbox" name="orders" value="Market" checked><div class="check-box"></div><span>Market</span></label>
+              <label class="check-item"><input type="checkbox" name="orders" value="Market"><div class="check-box"></div><span>Market</span></label>
               <label class="check-item"><input type="checkbox" name="orders" value="Limit"><div class="check-box"></div><span>Limit</span></label>
               <label class="check-item"><input type="checkbox" name="orders" value="Stop Loss"><div class="check-box"></div><span>Stop Loss</span></label>
             </div>
@@ -1020,9 +1003,6 @@
       <input type="hidden" name="signature_data" id="signatureData">
 
       <div style="margin-top:24px">
-        <button type="button" class="quick-fill-btn" onclick="fillSampleData()">⚡ Auto Fill Sample Data</button>
-      </div>
-      <div style="margin-top:10px">
         <button type="submit" class="submit-btn">Submit Business Requirement Request →</button>
       </div>
       <div style="margin-top:10px">
@@ -1082,6 +1062,7 @@
   }
 
   document.querySelectorAll('input, select, textarea').forEach(el => {
+    if (el.tagName !== 'SELECT') el.setAttribute('autocomplete', 'off');
     el.addEventListener('change', updateProgress);
     el.addEventListener('input', updateProgress);
   });
@@ -1132,136 +1113,6 @@
     hasSig = false;
     document.getElementById('signatureData').value = '';
     document.getElementById('sigHint').textContent = 'Sign here ✦';
-  }
-
-  function triggerFieldEvents(el) {
-    el.dispatchEvent(new Event('input', { bubbles: true }));
-    el.dispatchEvent(new Event('change', { bubbles: true }));
-  }
-
-  function setFieldValue(name, value) {
-    const fields = [...document.querySelectorAll(`[name="${name}"]`)];
-    if (!fields.length) return;
-
-    const first = fields[0];
-    const values = Array.isArray(value) ? value : [value];
-
-    if (first.type === 'radio' || first.type === 'checkbox') {
-      fields.forEach((f) => {
-        f.checked = values.includes(f.value);
-        triggerFieldEvents(f);
-      });
-      return;
-    }
-
-    first.value = value;
-    triggerFieldEvents(first);
-  }
-
-  function fillSampleSignature() {
-    clearSig();
-    ctx.beginPath();
-    ctx.moveTo(25, 92);
-    ctx.bezierCurveTo(90, 42, 165, 126, 238, 88);
-    ctx.bezierCurveTo(302, 62, 375, 116, 450, 78);
-    ctx.stroke();
-    hasSig = true;
-    saveSignature();
-    document.getElementById('sigHint').textContent = '✓ Signature captured (auto-fill)';
-  }
-
-  function fillSampleData() {
-    const now = new Date();
-    const deadline = new Date(now.getTime() + (1000 * 60 * 60 * 24 * 90)).toISOString().slice(0, 10);
-
-    setFieldValue('project_name', 'Crypto Trading Simulator v2');
-    setFieldValue('client_name', 'Techey');
-    setFieldValue('project_goal', 'Build a scalable crypto trading simulator with leaderboard, tournaments, and anti-cheat controls.');
-    setFieldValue('purpose', ['Crypto Education', 'Trading Competition']);
-    setFieldValue('user_type', 'Beginner Trader');
-    setFieldValue('user_scale', '10,000');
-    setFieldValue('revenue', ['Ads', 'Competition Fee']);
-    setFieldValue('jurisdiction', 'Southeast Asia');
-    setFieldValue('legal_mode', 'Simulation Only');
-    setFieldValue('kyc_aml', 'Optional');
-    setFieldValue('age_gate', '18+');
-    setFieldValue('restricted_regions', 'OFAC-sanctioned regions');
-
-    setFieldValue('initial_balance', '10000');
-    setFieldValue('trading_fee', '0.1');
-    setFieldValue('maker_fee', '0.02');
-    setFieldValue('taker_fee', '0.05');
-    setFieldValue('leverage', 'No');
-    setFieldValue('max_leverage_x', '5');
-    setFieldValue('shortsell', 'No');
-    setFieldValue('auth', 'Telegram Only');
-    setFieldValue('coins', ['BTC', 'ETH', 'SOL']);
-    setFieldValue('extra_coins', 'LINK, MATIC');
-    setFieldValue('orders', ['Market', 'Limit']);
-    setFieldValue('price_api', 'Binance');
-    setFieldValue('update_freq', '5 sec');
-    setFieldValue('pnl_method', 'Mark-to-Market');
-    setFieldValue('liquidation_rule', 'Not Applicable');
-    setFieldValue('slippage_model', 'Fixed Bps');
-    setFieldValue('position_limits', 'Max 3 positions per user; daily loss cap 10%.');
-    setFieldValue('data_fallbacks', ['CoinGecko', 'Internal Cache']);
-    setFieldValue('price_staleness_sec', '10');
-    setFieldValue('api_rate_plan', 'Retry + Exponential Backoff');
-    setFieldValue('downtime_behavior', 'Freeze New Orders');
-    setFieldValue('ranking', ['ROI']);
-    setFieldValue('lb_reset', 'Weekly');
-    setFieldValue('tournament_entry', 'Free');
-    setFieldValue('rewards', ['Points']);
-
-    setFieldValue('concurrent', '5,000');
-    setFieldValue('availability_target', '99.9%');
-    setFieldValue('p95_latency_ms', '300');
-    setFieldValue('max_exec_delay_ms', '500');
-    setFieldValue('rto_minutes', '30');
-    setFieldValue('rpo_minutes', '5');
-    setFieldValue('dr_test_cadence', 'Quarterly');
-    setFieldValue('access_control', 'Role Based');
-    setFieldValue('data_retention', '1 year');
-    setFieldValue('backup', 'Yes');
-    setFieldValue('security_controls', ['TLS 1.2+', 'Encryption at Rest', 'Audit Logging']);
-    setFieldValue('audit_log_retention', '1 year');
-    setFieldValue('anti_cheat', ['Device Fingerprinting', 'Bot Pattern Detection']);
-    setFieldValue('multi_account_policy', 'Block');
-
-    setFieldValue('backend', 'Node.js');
-    setFieldValue('database', ['PostgreSQL', 'Redis']);
-    setFieldValue('hosting', 'AWS');
-    setFieldValue('arch', 'Microservices');
-    setFieldValue('tech_notes', 'Use websocket price stream and periodic reconciliation jobs.');
-    setFieldValue('monitoring_stack', 'Prometheus + Grafana + Loki');
-    setFieldValue('alert_channels', ['Telegram', 'Email']);
-    setFieldValue('environment_strategy', 'Dev + Staging + Prod');
-    setFieldValue('cicd_required', 'Required');
-
-    setFieldValue('deadline', deadline);
-    setFieldValue('budget', '$20,000 – $50,000');
-    setFieldValue('risks', ['API Rate Limits', 'Data Security']);
-    setFieldValue('extra_notes', 'Auto-filled sample for QA testing.');
-    setFieldValue('mvp_scope', 'Telegram auth, simulated spot trading, portfolio, leaderboard, tournament.');
-    setFieldValue('out_of_scope', 'Real fund custody and copy trading in v1.');
-    setFieldValue('acceptance_criteria', 'No P0/P1 bugs, p95 latency under target, security checklist signed off.');
-    setFieldValue('success_metrics', 'D7 retention > 20%, 5k+ active users in first month.');
-    setFieldValue('signoff_authority', 'Product Owner');
-    setFieldValue('launch_window', 'Closed Beta');
-
-    setFieldValue('requester_name', 'QA Tester');
-    setFieldValue('requester_email', 'qa@example.com');
-    setFieldValue('requester_role', 'BA/SA');
-    document.getElementById('submissionDate').value = now.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-    triggerFieldEvents(document.getElementById('submissionDate'));
-
-    fillSampleSignature();
-    updateProgress();
-    alert('Sample data filled. Review and click Submit.');
   }
 
   // ── Google Sheets Integration ──────────────────────────────
