@@ -102,6 +102,35 @@
     font-size: 15px;
   }
 
+  .hero-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 22px;
+  }
+
+  .hero-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 11px 16px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.03);
+    color: var(--text2);
+    transition: border-color 0.2s, background 0.2s, color 0.2s;
+  }
+
+  .hero-link:hover {
+    border-color: rgba(59,130,246,0.35);
+    background: rgba(59,130,246,0.08);
+    color: var(--text);
+  }
+
   .notice {
     display: grid;
     grid-template-columns: 1.2fr 1fr;
@@ -474,22 +503,8 @@
 
 <div class="page-wrapper">
   <div class="hero">
-    <div class="hero-badge"></div>
-    <h1>Client Discovery Questionnaire</h1>
-    <p class="hero-sub">This version keeps only the questions a non-technical client can answer quickly. The delivery team can turn the answers into a full technical requirements document later.</p>
+    <h1>Project Profile</h1>
   </div>
-
-  <div class="notice">
-    <div class="notice-card">
-      <div class="notice-title">How to use this</div>
-      <div class="notice-copy">Ask for business goals, audience, must-have features, timeline, and constraints. Skip engineering jargon during discovery. This form is designed to capture just enough context for the next solution workshop.</div>
-    </div>
-    <div class="notice-card">
-      <div class="notice-title">Expected output</div>
-      <div class="notice-copy">After submission, the responses are sent to Google Sheets and the page also generates a short discovery brief that can be shared with BA, PM, or SA.</div>
-    </div>
-  </div>
-
   <form id="clientForm" onsubmit="submitQuestionnaire(event)" autocomplete="off">
     <section class="card">
       <div class="card-head">
@@ -691,11 +706,12 @@
       <div class="card-head">
         <div class="card-step">S4</div>
         <div>
-          <div class="card-title">Success Criteria</div>
-          <div class="card-sub">What matters most, and what could block delivery</div>
+          <div class="card-title">Success and Scope Alignment</div>
+          <div class="card-sub">What success looks like and what to include in phase one</div>
         </div>
       </div>
       <div class="card-body">
+        <p class="field-hint" style="margin-bottom:12px">This helps us plan timeline, scope, and budget accurately.</p>
         <div class="field-grid one">
           <div class="field">
             <label>How will you know this project is successful? <span>*</span></label>
@@ -704,11 +720,11 @@
         </div>
         <div class="field-grid" style="margin-top:16px">
           <div class="field">
-            <label>Biggest risks or concerns</label>
+            <label>Any concerns or limitations?</label>
             <textarea name="risks" placeholder="Example: tight deadline, unclear approvals, data access, compliance concerns, low engagement..."></textarea>
           </div>
           <div class="field">
-            <label>What is explicitly out of scope?</label>
+            <label>What should we not include in phase 1?</label>
             <textarea name="out_of_scope" placeholder="Example: mobile app in phase one, admin analytics, real-money trading, multilingual support..."></textarea>
           </div>
         </div>
@@ -723,7 +739,8 @@
 
     <div class="footer-card">
       <div class="footer-row">
-        <button type="submit" class="submit-btn">Submit Client Questionnaire</button>
+        <p class="footer-copy">Submitting this form sends the responses to Google Sheets and generates a short client brief for the delivery team.</p>
+        <button type="submit" class="submit-btn">Submit</button>
       </div>
     </div>
   </form>
@@ -878,7 +895,7 @@
 
     return {
       form_type: 'client_questionnaire',
-      submission_source: 'index.html',
+      submission_source: 'client-questionnaire.html',
       project_name: getRawValue('project_name'),
       client_name: getRawValue('company_name'),
       project_goal: getRawValue('project_goal'),
